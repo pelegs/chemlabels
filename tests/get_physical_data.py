@@ -1,6 +1,7 @@
 import requests
 from sys import argv
 import re
+from copy import deepcopy
 
 
 ##############################
@@ -46,6 +47,18 @@ def search_dict(d, searched_key, searched_val, path=[]):
     return path[:-2]  # both "END" and the searched pair aren't needed
 
 
+def nested_get(dict, keys):
+    """
+    Returns a value in a nested dictionary (which could also have
+    nested lists in it) by a list of sequential keys. example:
+    d = {'foo': {'bar': 4}}, nested_get(d, ['foo', 'barr']) -> 4.
+    """
+    d = deepcopy(dict)
+    for key in keys:
+        d = d[key]
+    return d
+
+
 #######################
 #        regex        #
 #######################
@@ -60,19 +73,24 @@ fraction_regex = r"-*\d+\.*\d*"
 path = list()
 path = search_dict(data, "TOCHeading", "Boiling Point", path)
 print(path)
+print(nested_get(data, path))
 
 path2 = list()
 path2 = search_dict(data, "TOCHeading", "Melting Point", path2)
 print(path2)
+print(nested_get(data, path2))
 
 path3 = list()
 path3 = search_dict(data, "TOCHeading", "Density", path3)
 print(path3)
+print(nested_get(data, path3))
 
 path4 = list()
 path4 = search_dict(data, "TOCHeading", "GHS Classification", path4)
 print(path4)
+print(nested_get(data, path4))
 
 path5 = list()
 path5 = search_dict(data, "Name", "NFPA 704 Diamond", path5)
 print(path5)
+print(nested_get(data, path5[:-3]))
