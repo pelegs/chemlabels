@@ -21,7 +21,7 @@ data = resp.json()
 ###########################
 
 
-def search_dict(d, searched_key, searched_val, path=[]):
+def get_val_from_key_list(d, searched_key, searched_val, path=[]):
     """
     Returns the first path in a nested dictionary/list which ends
     with a key, value pair. The condition to stop the recursion is when
@@ -35,16 +35,26 @@ def search_dict(d, searched_key, searched_val, path=[]):
             if key == searched_key and val == searched_val:
                 path.append("END")
                 return
-            search_dict(d[key], searched_key, searched_val, path)
+            get_val_from_key_list(d[key], searched_key, searched_val, path)
             if path[-1] != "END":
                 path.pop()
     elif isinstance(d, list):
         for i, _ in enumerate(d):
             path.append(i)
-            search_dict(d[i], searched_key, searched_val, path)
+            get_val_from_key_list(d[i], searched_key, searched_val, path)
             if path[-1] != "END":
                 path.pop()
     return path[:-2]  # both "END" and the searched pair aren't needed
+
+
+def search_dict(d, key, val):
+    """
+    Wrapper for get_val_from_key_list so that path is returned
+    directly, without the need to create a new list object each time.
+    """
+    path = list()
+    path = get_val_from_key_list(d, key, val, path)
+    return path
 
 
 def nested_get(dict, keys):
@@ -70,27 +80,17 @@ fraction_regex = r"-*\d+\.*\d*"
 #        Physical properties        #
 #####################################
 
-path = list()
-path = search_dict(data, "TOCHeading", "Boiling Point", path)
+path = search_dict(data, "TOCHeading", "Boiling Point")
 print(path)
-print(nested_get(data, path))
 
-path2 = list()
-path2 = search_dict(data, "TOCHeading", "Melting Point", path2)
+path2 = search_dict(data, "TOCHeading", "Melting Point")
 print(path2)
-print(nested_get(data, path2))
 
-path3 = list()
-path3 = search_dict(data, "TOCHeading", "Density", path3)
+path3 = search_dict(data, "TOCHeading", "Density")
 print(path3)
-print(nested_get(data, path3))
 
-path4 = list()
-path4 = search_dict(data, "TOCHeading", "GHS Classification", path4)
+path4 = search_dict(data, "TOCHeading", "GHS Classification")
 print(path4)
-print(nested_get(data, path4))
 
-path5 = list()
-path5 = search_dict(data, "Name", "NFPA 704 Diamond", path5)
+path5 = search_dict(data, "Name", "NFPA 704 Diamond")
 print(path5)
-print(nested_get(data, path5[:-3]))
