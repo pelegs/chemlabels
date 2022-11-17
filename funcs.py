@@ -3,6 +3,17 @@ import re
 from copy import deepcopy
 
 
+###########################
+#        Constants        #
+###########################
+
+C_DEG = ["°C", "℃"]
+C_DEG_OR = f"({'|'.join(C_DEG)})"
+DEG_REGEX = re.compile(
+    f"((?P<low>-*\d+\.*\d*)\s*-*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
+)
+
+
 #######################
 #        Class        #
 #######################
@@ -12,17 +23,14 @@ class Chemical:
     def __init__(self, cid):
         self.cid = cid
         self.data_url = (
-             "https://pubchem.ncbi.nlm.nih.gov"
+            "https://pubchem.ncbi.nlm.nih.gov"
             f"/rest/pug_view/data/compound/{self.cid}/JSON/"
         )
         self.rest_params = dict(response_type="display")
         self.get_data()
 
     def get_data(self):
-        resp = requests.get(
-            url=self.data_url,
-            params=self.rest_params
-        )
+        resp = requests.get(url=self.data_url, params=self.rest_params)
         self.data = resp.json()
 
     def get_property(self, key, val):
@@ -31,16 +39,30 @@ class Chemical:
         return property
 
     def get_bp(self):
-        bp_data = self.get_property('TOCHeading', 'Boiling Point')
+        bp_data = self.get_property("TOCHeading", "Boiling Point")
         bp_list = bp_data["Information"]
+        bp_candidates = []
         for bp in bp_list:
             if "StringWithMarkup" in bp["Value"]:
-                print(bp["Value"]["StringWithMarkup"][0]["String"])
+                candidate = bp["Value"]["StringWithMarkup"][0]["String"]
+                if any_comp(C_DEG, candidate):
+                    bp_candidates.append(candidate)
+        # for now we choose the first candidate always
+        bp = DEG_REGEX.match(bp_candidates[0])
+        print(get_temperatures(bp))
+
 
 
 ###########################
 #        Functions        #
 ###########################
+
+
+def any_comp(list, string):
+    """
+    Checks if any element in list is in string
+    """
+    return any(element in string for element in list)
 
 
 def get_val_from_key_list(d, searched_key, searched_val, path=[]):
@@ -91,6 +113,15 @@ def nested_get(dict, keys):
     return d
 
 
+def get_temperatures(T):
+    low_temp = float(T.group('low'))
+    if T.group('high'):
+        high_temp = float(T.group('high'))
+        return (low_temp, high_temp)
+    return low_temp
+
+
 if __name__ == "__main__":
     ms = Chemical(4133)
+    # ms = Chemical(8028)
     ms.get_bp()
