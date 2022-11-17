@@ -1,6 +1,7 @@
 import requests
 import re
 from copy import deepcopy
+from warnings import warn
 
 
 ###########################
@@ -10,7 +11,7 @@ from copy import deepcopy
 C_DEG = ["°C", "℃"]
 C_DEG_OR = f"({'|'.join(C_DEG)})"
 DEG_REGEX = re.compile(
-    f"((?P<low>-*\d+\.*\d*)\s*(to|\s+)*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
+    f"((?P<low>-*\d+\.*\d*)\s*(to|-|\s+)*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
 )
 
 
@@ -28,6 +29,9 @@ class Chemical:
         )
         self.rest_params = dict(response_type="display")
         self.get_data()
+        self.bp = self.get_phase_transition_temperature("Boiling Point")
+        self.mp = self.get_phase_transition_temperature("Melting Point")
+        print(f"BP: {self.bp}°C, MP: {self.mp}°C")
 
     def get_data(self):
         resp = requests.get(url=self.data_url, params=self.rest_params)
@@ -35,32 +39,45 @@ class Chemical:
 
     def get_property(self, key, val):
         path = search_dict(self.data, key, val)
-        property = nested_get(self.data, path)
+        if path:
+            property = nested_get(self.data, path)
+        else:
+            property = None
         return property
 
-    def get_bp(self):
-        bp_data = self.get_property("TOCHeading", "Boiling Point")
-        bp_list = bp_data["Information"]
-        bp_candidates = []
-        for bp in bp_list:
-            if "StringWithMarkup" in bp["Value"]:
-                candidate = bp["Value"]["StringWithMarkup"][0]["String"]
+    def get_phase_transition_temperature(self, type='Boiling Point'):
+        if type not in ['Boiling Point', 'Melting Point']:
+            warn("Wrong phase transition type!")
+            return None
+        pt_data = self.get_property("TOCHeading", type)
+        if not pt_data:
+            return None
+        pt_list = pt_data["Information"]
+        pt_candidates = []
+        for pt in pt_list:
+            if "StringWithMarkup" in pt["Value"]:
+                candidate = pt["Value"]["StringWithMarkup"][0]["String"]
                 if any_comp(C_DEG, candidate):
-                    bp_candidates.append(candidate)
-        # Iterate until a bp range or value is found (if at all)
+                    pt_candidates.append(candidate)
+            elif "Number" in pt["Value"]:
+                pt = float(pt["Value"]["Number"][0])
+                return pt
+            else:
+                return None
+        # Iterate until a pt range or value is found (if at all)
         # If one is found convert range/value to float(s),
         # otherwise return None
-        for candidate in bp_candidates:
-            bp_try = DEG_REGEX.match(candidate)
-            if bp_try is not None:
-                break
-        if bp_try:
-            self.bp = get_temperatures(bp_try)
+        for candidate in pt_candidates:
+            if isinstance(candidate, float):
+                return None
+            elif isinstance(candidate, str):
+                pt_try = DEG_REGEX.match(candidate)
+                if pt_try is not None:
+                    break
+        if pt_try:
+            return get_temperatures(pt_try)
         else:
-            self.bp = None
-
-        # TEMP
-        print(self.bp)
+            return None
 
 
 ###########################
@@ -78,7 +95,7 @@ def any_comp(list, string):
 def get_val_from_key_list(d, searched_key, searched_val, path=[]):
     """
     Returns the first path in a nested dictionary/list which ends
-    with a key, value pair. The condition to stop the recursion is when
+    with a key:value pair. The condition to stop the recursion is when
     the pair is found, and the mechanism is by appending "END" to the list.
     """
     if len(path) > 0 and path[-1] == "END":
@@ -108,6 +125,8 @@ def search_dict(d, key, val):
     """
     path = list()
     path = get_val_from_key_list(d, key, val, path)
+    if path == []:
+        return None
     return path
 
 
@@ -134,10 +153,13 @@ def get_temperatures(T):
 
 
 if __name__ == "__main__":
-    # ms = Chemical(4133)
-    # ms = Chemical(8028)
-    # ms = Chemical(6228)
-    # ms = Chemical(6386)
-    # ms = Chemical(1548943)
-    ms = Chemical(180)
-    ms.get_bp()
+    # methylsalicylate = Chemical(4133)
+    # ms2 = Chemical(8028)
+    # ms3 = Chemical(6228)
+    # ms4 = Chemical(6386)
+    # ms5 = Chemical(1548943)
+    # ms6 = Chemical(180)
+    # ms7 = Chemical(5793)
+    dimethylamine = Chemical(674)
+    # benzoin = Chemical(8400)
+    # diphenyl_methanol = Chemical(7037)
