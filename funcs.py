@@ -2,6 +2,7 @@ import requests
 import re
 from copy import deepcopy
 from warnings import warn
+from numbers import Number
 
 
 ###########################
@@ -29,9 +30,16 @@ class Chemical:
         )
         self.rest_params = dict(response_type="display")
         self.get_data()
+        self.name = self.data['Record']['RecordTitle']
         self.bp = self.get_phase_transition_temperature("Boiling Point")
         self.mp = self.get_phase_transition_temperature("Melting Point")
-        print(f"BP: {self.bp}°C, MP: {self.mp}°C")
+
+    def __str__(self):
+        return f"""
+Name: {self.name},
+B.P: {format_temperature_range(self.bp)},
+M.P: {format_temperature_range(self.mp)}.
+"""
 
     def get_data(self):
         resp = requests.get(url=self.data_url, params=self.rest_params)
@@ -75,7 +83,7 @@ class Chemical:
                 if pt_try is not None:
                     break
         if pt_try:
-            return get_temperatures(pt_try)
+            return get_temperatures_from_string(pt_try)
         else:
             return None
 
@@ -142,7 +150,7 @@ def nested_get(dict, keys):
     return d
 
 
-def get_temperatures(T):
+def get_temperatures_from_string(T):
     if T:
         low_temp = float(T.group('low'))
         if T.group('high'):
@@ -152,14 +160,19 @@ def get_temperatures(T):
     return ''
 
 
+def format_temperature_range(range):
+    if isinstance(range, Number):
+        return f"{range} °C"
+    elif isinstance(range, list) or isinstance(range, tuple):
+        return f"{range[0]}-{range[-1]} °C"
+    elif range is None:
+        return None
+    else:
+        raise ValueError(f"Range has irrelevant type: {type(range)}.")
+
+
 if __name__ == "__main__":
-    # methylsalicylate = Chemical(4133)
-    # ms2 = Chemical(8028)
-    # ms3 = Chemical(6228)
-    # ms4 = Chemical(6386)
-    # ms5 = Chemical(1548943)
-    # ms6 = Chemical(180)
-    # ms7 = Chemical(5793)
-    dimethylamine = Chemical(674)
-    # benzoin = Chemical(8400)
-    # diphenyl_methanol = Chemical(7037)
+    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
+    for cid in [4133, 8028]:
+        c = Chemical(cid)
+        print(c)
