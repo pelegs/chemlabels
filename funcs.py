@@ -10,7 +10,7 @@ from copy import deepcopy
 C_DEG = ["°C", "℃"]
 C_DEG_OR = f"({'|'.join(C_DEG)})"
 DEG_REGEX = re.compile(
-    f"((?P<low>-*\d+\.*\d*)\s*-*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
+    f"((?P<low>-*\d+\.*\d*)\s*(to|\s+)*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
 )
 
 
@@ -47,10 +47,20 @@ class Chemical:
                 candidate = bp["Value"]["StringWithMarkup"][0]["String"]
                 if any_comp(C_DEG, candidate):
                     bp_candidates.append(candidate)
-        # for now we choose the first candidate always
-        bp = DEG_REGEX.match(bp_candidates[0])
-        print(get_temperatures(bp))
+        # Iterate until a bp range or value is found (if at all)
+        # If one is found convert range/value to float(s),
+        # otherwise return None
+        for candidate in bp_candidates:
+            bp_try = DEG_REGEX.match(candidate)
+            if bp_try is not None:
+                break
+        if bp_try:
+            self.bp = get_temperatures(bp_try)
+        else:
+            self.bp = None
 
+        # TEMP
+        print(self.bp)
 
 
 ###########################
@@ -114,14 +124,20 @@ def nested_get(dict, keys):
 
 
 def get_temperatures(T):
-    low_temp = float(T.group('low'))
-    if T.group('high'):
-        high_temp = float(T.group('high'))
-        return (low_temp, high_temp)
-    return low_temp
+    if T:
+        low_temp = float(T.group('low'))
+        if T.group('high'):
+            high_temp = float(T.group('high'))
+            return (low_temp, high_temp)
+        return low_temp
+    return ''
 
 
 if __name__ == "__main__":
-    ms = Chemical(4133)
+    # ms = Chemical(4133)
     # ms = Chemical(8028)
+    # ms = Chemical(6228)
+    # ms = Chemical(6386)
+    # ms = Chemical(1548943)
+    ms = Chemical(180)
     ms.get_bp()
