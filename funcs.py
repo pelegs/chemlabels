@@ -32,20 +32,27 @@ class Chemical:
         self.rest_params = dict(response_type="display")
         self.get_data()
         self.name = self.data["Record"]["RecordTitle"]
+        self.get_CAS()
+        self.get_molecular_formula()
         self.get_MW()
         self.bp = self.get_phase_transition_temperature("Boiling Point")
         self.mp = self.get_phase_transition_temperature("Melting Point")
         self.get_GHS_pictograms()
         self.get_NFPA704_diamond()
+        self.get_hazard_statements()
 
     def __str__(self):
         return f"""
 Name: {self.name}
+CAS: {self.CAS}
+Molecular formula: {self.molecular_formula}
 MW: {self.MW} g/mol
 B.P: {format_temperature_range(self.bp)}
 M.P: {format_temperature_range(self.mp)}
 Pictograms: {','.join(self.GHS_pictograms)}
 NFPA704 diamond: {self.NFPA704_diamond}
+Hazard statements: {self.hazard_statements}
+******************************************
 """
 
     def get_data(self):
@@ -59,6 +66,20 @@ NFPA704 diamond: {self.NFPA704_diamond}
         else:
             property = None
         return property
+
+    def get_CAS(self):
+        CAS_dict = self.get_property("TOCHeading", "CAS")
+        if CAS_dict:
+            self.CAS = CAS_dict["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.CAS = None
+
+    def get_molecular_formula(self):
+        formula = self.get_property("TOCHeading", "Molecular Formula")
+        if formula:
+            self.molecular_formula = formula["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.molecular_formula = None
 
     def get_MW(self):
         MW_dict = self.get_property("TOCHeading", "Molecular Weight")
@@ -120,6 +141,16 @@ NFPA704 diamond: {self.NFPA704_diamond}
             self.NFPA704_diamond = d["Value"]["StringWithMarkup"][0]["Markup"][0]["Extra"]
         else:
             self.NFPA704_diamond = []
+
+    def get_hazard_statements(self):
+        statements = self.get_property("Name", "GHS Hazard Statements")
+        if statements:
+            self.hazard_statements = [
+                re.findall(r"H(\d+):", s["String"])
+                for s in statements["Value"]["StringWithMarkup"]
+            ]
+        else:
+            self.hazard_statements = None
 
 
 ###########################
@@ -225,7 +256,7 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
-    # for cid in [4133, 8028]:
+    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
+    for cid in [4133, 8028]:
         c = Chemical(cid)
         print(c)
