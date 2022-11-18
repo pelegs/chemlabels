@@ -32,6 +32,7 @@ class Chemical:
         self.rest_params = dict(response_type="display")
         self.get_data()
         self.name = self.data["Record"]["RecordTitle"]
+        self.get_MW()
         self.bp = self.get_phase_transition_temperature("Boiling Point")
         self.mp = self.get_phase_transition_temperature("Melting Point")
         self.get_GHS_pictograms()
@@ -39,9 +40,12 @@ class Chemical:
 
     def __str__(self):
         return f"""
-Name: {self.name},
-B.P: {format_temperature_range(self.bp)},
-M.P: {format_temperature_range(self.mp)}.
+Name: {self.name}
+MW: {self.MW} g/mol
+B.P: {format_temperature_range(self.bp)}
+M.P: {format_temperature_range(self.mp)}
+Pictograms: {','.join(self.GHS_pictograms)}
+NFPA704 diamond: {self.NFPA704_diamond}
 """
 
     def get_data(self):
@@ -55,6 +59,13 @@ M.P: {format_temperature_range(self.mp)}.
         else:
             property = None
         return property
+
+    def get_MW(self):
+        MW_dict = self.get_property("TOCHeading", "Molecular Weight")
+        if MW_dict:
+            self.MW = MW_dict["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.MW = None
 
     def get_phase_transition_temperature(self, type="Boiling Point"):
         if type not in ["Boiling Point", "Melting Point"]:
@@ -99,15 +110,16 @@ M.P: {format_temperature_range(self.mp)}.
                 for x in d["Value"]["StringWithMarkup"][0]["Markup"]
             ]
         else:
-            self.GHS_pictograms = None
+            self.GHS_pictograms = []
 
     def get_NFPA704_diamond(self):
         path = get_path(self.data, "Name", "NFPA 704 Diamond")
-        print(path)
-        # if path:
-        #     d = nested_get(self.data, path)
-        #     self.NFPA704_diamond = d["Value"]["StringWithMarkup"]["Markup"][0]["Extra"]
-        #     print(self.NFPA704_diamond)
+        # print(path)
+        if path:
+            d = nested_get(self.data, path)
+            self.NFPA704_diamond = d["Value"]["StringWithMarkup"][0]["Markup"][0]["Extra"]
+        else:
+            self.NFPA704_diamond = []
 
 
 ###########################
@@ -183,7 +195,7 @@ def nested_get(dict, keys):
     """
     Returns a value in a nested dictionary (which could also have
     nested lists in it) by a list of sequential keys. example:
-    d = {'foo': {'bar': 4}}, nested_get(d, ['foo', 'barr']) -> 4.
+    d = {'foo': {'bar': 4}}, nested_get(d, ['foo', 'bar']) -> 4.
     """
     d = deepcopy(dict)
     for key in keys:
