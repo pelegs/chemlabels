@@ -3,6 +3,7 @@ import re
 from copy import deepcopy
 from warnings import warn
 from numbers import Number
+from collections.abc import Iterable
 
 
 ###########################
@@ -30,9 +31,11 @@ class Chemical:
         )
         self.rest_params = dict(response_type="display")
         self.get_data()
-        self.name = self.data['Record']['RecordTitle']
+        self.name = self.data["Record"]["RecordTitle"]
         self.bp = self.get_phase_transition_temperature("Boiling Point")
         self.mp = self.get_phase_transition_temperature("Melting Point")
+        self.get_GHS_pictograms()
+        self.get_NFPA704_diamond()
 
     def __str__(self):
         return f"""
@@ -46,15 +49,15 @@ M.P: {format_temperature_range(self.mp)}.
         self.data = resp.json()
 
     def get_property(self, key, val):
-        path = search_dict(self.data, key, val)
+        path = get_path(self.data, key, val)
         if path:
             property = nested_get(self.data, path)
         else:
             property = None
         return property
 
-    def get_phase_transition_temperature(self, type='Boiling Point'):
-        if type not in ['Boiling Point', 'Melting Point']:
+    def get_phase_transition_temperature(self, type="Boiling Point"):
+        if type not in ["Boiling Point", "Melting Point"]:
             warn("Wrong phase transition type!")
             return None
         pt_data = self.get_property("TOCHeading", type)
@@ -87,6 +90,25 @@ M.P: {format_temperature_range(self.mp)}.
         else:
             return None
 
+    def get_GHS_pictograms(self):
+        path = get_path(self.data, "Name", "Chemical Safety")
+        if path:
+            d = nested_get(self.data, path)
+            self.GHS_pictograms = [
+                x["Extra"]
+                for x in d["Value"]["StringWithMarkup"][0]["Markup"]
+            ]
+        else:
+            self.GHS_pictograms = None
+
+    def get_NFPA704_diamond(self):
+        path = get_path(self.data, "Name", "NFPA 704 Diamond")
+        print(path)
+        # if path:
+        #     d = nested_get(self.data, path)
+        #     self.NFPA704_diamond = d["Value"]["StringWithMarkup"]["Markup"][0]["Extra"]
+        #     print(self.NFPA704_diamond)
+
 
 ###########################
 #        Functions        #
@@ -95,47 +117,66 @@ M.P: {format_temperature_range(self.mp)}.
 
 def any_comp(list, string):
     """
-    Checks if any element in list is in string
+    Checks if any element in list is in string.
     """
     return any(element in string for element in list)
 
-
-def get_val_from_key_list(d, searched_key, searched_val, path=[]):
+def convert(lst):
     """
-    Returns the first path in a nested dictionary/list which ends
-    with a key:value pair. The condition to stop the recursion is when
-    the pair is found, and the mechanism is by appending "END" to the list.
+    Converts a list to a dictionaty, where the i-th element
+    gets [i] as its key.
     """
-    if len(path) > 0 and path[-1] == "END":
-        return
-    if isinstance(d, dict):
-        for key, val in d.items():
-            path.append(key)
-            if key == searched_key and val == searched_val:
-                path.append("END")
-                return
-            get_val_from_key_list(d[key], searched_key, searched_val, path)
-            if path[-1] != "END":
-                path.pop()
-    elif isinstance(d, list):
-        for i, _ in enumerate(d):
-            path.append(i)
-            get_val_from_key_list(d[i], searched_key, searched_val, path)
-            if path[-1] != "END":
-                path.pop()
-    return path[:-2]  # both "END" and the searched pair aren't needed
+    return {
+        index: element
+        for index, element in enumerate(lst)
+    }
 
 
-def search_dict(d, key, val):
+def flatten(xs):
     """
-    Wrapper for get_val_from_key_list so that path is returned
-    directly, without the need to create a new list object each time.
+    Completely flattens a nested list.
     """
-    path = list()
-    path = get_val_from_key_list(d, key, val, path)
-    if path == []:
+    for x in xs:
+        if isinstance(x, Iterable) and not isinstance(x, (str, bytes)):
+            yield from flatten(x)
+        else:
+            yield x
+
+
+def find_path(dct, key, val):
+    """
+    Finds the first path to a wanted key:value pair
+    in a nested dictionary which may contain lists.
+    """
+    if isinstance(dct, list) or isinstance(dct, tuple):
+        d = convert(dct)
+    elif isinstance(dct, dict):
+        d = dct
+    else:
         return None
+    if key in d.keys() and d[key] == val:
+        return key
+    path = None
+    for d_key in d.keys():
+        r = find_path(d[d_key], key, val)
+        if r is None:
+            continue
+        else:
+            return [x for x in flatten([d_key] + [r])]
     return path
+
+
+def get_path(dct, key, val):
+    """
+    Wrapper around "find_path" that returns the path
+    minus the last element.
+    TODO: write explaination.
+    """
+    path = find_path(dct, key, val)
+    if path:
+        return path[:-1]
+    else:
+        return path  # None
 
 
 def nested_get(dict, keys):
@@ -152,12 +193,12 @@ def nested_get(dict, keys):
 
 def get_temperatures_from_string(T):
     if T:
-        low_temp = float(T.group('low'))
-        if T.group('high'):
-            high_temp = float(T.group('high'))
+        low_temp = float(T.group("low"))
+        if T.group("high"):
+            high_temp = float(T.group("high"))
             return (low_temp, high_temp)
         return low_temp
-    return ''
+    return ""
 
 
 def format_temperature_range(range):
@@ -172,7 +213,7 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
-    for cid in [4133, 8028]:
+    for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
+    # for cid in [4133, 8028]:
         c = Chemical(cid)
         print(c)
