@@ -35,11 +35,13 @@ class Chemical:
         self.get_CAS()
         self.get_molecular_formula()
         self.get_MW()
+        self.get_SMILES()
         self.bp = self.get_phase_transition_temperature("Boiling Point")
         self.mp = self.get_phase_transition_temperature("Melting Point")
         self.get_GHS_pictograms()
         self.get_NFPA704_diamond()
         self.get_hazard_statements()
+        self.get_precaution_statements()
 
     def __str__(self):
         return f"""
@@ -47,11 +49,13 @@ Name: {self.name}
 CAS: {self.CAS}
 Molecular formula: {self.molecular_formula}
 MW: {self.MW} g/mol
+SMILES: {self.SMILES}
 B.P: {format_temperature_range(self.bp)}
 M.P: {format_temperature_range(self.mp)}
 Pictograms: {','.join(self.GHS_pictograms)}
 NFPA704 diamond: {self.NFPA704_diamond}
 Hazard statements: {self.hazard_statements}
+Precautionary statements: {self.precaution_statements}
 ******************************************
 """
 
@@ -87,6 +91,13 @@ Hazard statements: {self.hazard_statements}
             self.MW = MW_dict["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
         else:
             self.MW = None
+
+    def get_SMILES(self):
+        SMILES_dict = self.get_property("TOCHeading", "Canonical SMILES")
+        if SMILES_dict:
+            self.SMILES = SMILES_dict["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.SMILES = None
 
     def get_phase_transition_temperature(self, type="Boiling Point"):
         if type not in ["Boiling Point", "Melting Point"]:
@@ -158,6 +169,15 @@ Hazard statements: {self.hazard_statements}
             ]
         else:
             self.hazard_statements = None
+
+    def get_precaution_statements(self):
+        statements = self.get_property("Name", "Precautionary Statement Codes")
+        # self.precaution_statements = None
+        # return
+        if statements:
+            self.precaution_statements = statements["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.precaution_statements = None
 
 
 ###########################
@@ -263,7 +283,7 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
-    for cid in [4133, 8028, 6367]:
+    for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
+    # for cid in [4133, 8028, 6367]:
         c = Chemical(cid)
         print(c)
