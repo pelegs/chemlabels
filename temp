@@ -1,1 +1,36 @@
-<generator object findKeys at 0x7f00c4dab3c0>
+
+Name: Methyl salicylate
+CAS: 119-36-8
+Molecular formula: C8H8O3
+MW: 152.15 g/mol
+B.P: 220.0-224.0 °C
+M.P: -8.6 °C
+Pictograms: Irritant
+NFPA704 diamond: ['1', '1', '0']
+Hazard statements: []
+******************************************
+
+
+Name: Tetrahydrofuran
+CAS: 109-99-9
+Molecular formula: C4H8O
+MW: 72.11 g/mol
+B.P: 65.0 °C
+M.P: -108.44 °C
+Pictograms: Flammable,Irritant,Health Hazard
+NFPA704 diamond: ['2', '3', '1']
+Hazard statements: [225, 319, 335, 351]
+******************************************
+
+
+Name: Acetyl chloride
+CAS: 75-36-5
+Molecular formula: C2H3ClO
+MW: 78.50 g/mol
+B.P: 51.0 °C
+M.P: -112.7 °C
+Pictograms: Flammable,Corrosive
+NFPA704 diamond: ['3', '3', '2', '̵W̵']
+Hazard statements: [225, 314]
+******************************************
+

@@ -138,7 +138,12 @@ Hazard statements: {self.hazard_statements}
         # print(path)
         if path:
             d = nested_get(self.data, path)
-            self.NFPA704_diamond = d["Value"]["StringWithMarkup"][0]["Markup"][0]["Extra"]
+            self.NFPA704_diamond = [
+                x.strip() for x in (
+                    d["Value"]["StringWithMarkup"][0]
+                    ["Markup"][0]["Extra"].split('-')
+                )
+            ]
         else:
             self.NFPA704_diamond = []
 
@@ -146,8 +151,10 @@ Hazard statements: {self.hazard_statements}
         statements = self.get_property("Name", "GHS Hazard Statements")
         if statements:
             self.hazard_statements = [
-                re.findall(r"H(\d+):", s["String"])
-                for s in statements["Value"]["StringWithMarkup"]
+                int(x) for x in flatten([
+                    re.findall(r"H(\d+):", s["String"])
+                    for s in statements["Value"]["StringWithMarkup"]
+                ])
             ]
         else:
             self.hazard_statements = None
@@ -257,6 +264,6 @@ def format_temperature_range(range):
 
 if __name__ == "__main__":
     # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
-    for cid in [4133, 8028]:
+    for cid in [4133, 8028, 6367]:
         c = Chemical(cid)
         print(c)
