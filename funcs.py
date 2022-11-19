@@ -98,6 +98,9 @@ Precautionary statements: {self.precaution_statements}
             self.SMILES = SMILES_dict["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
         else:
             self.SMILES = None
+    #
+    # def get_density(self):
+    #     density_dict = self.get_property("TOCHeading", "Density")
 
     def get_phase_transition_temperature(self, type="Boiling Point"):
         if type not in ["Boiling Point", "Melting Point"]:
@@ -283,7 +286,7 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037]:
-    # for cid in [4133, 8028, 6367]:
+    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037, 4311764]:
+    for cid in [6367]:
         c = Chemical(cid)
         print(c)
