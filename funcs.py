@@ -15,6 +15,17 @@ C_DEG_OR = f"({'|'.join(C_DEG)})"
 DEG_REGEX = re.compile(
     f"((?P<low>-*\d+\.*\d*)\s*(to|-|\s+)*\s*(?P<high>-*\d+\.*\d*)*)\s*{C_DEG_OR}"
 )
+pictogram_dict = {
+    "Flammable": "flame",
+    "Compressed Gas": "bottle",
+    "Corrosive": "acid",
+    "Irritant": "exclam",
+    "Environmental Hazard": "aqpol",
+    "Acute Toxic": "skull",
+    "Health Hazard": "health",
+    "Explosive": "explos",
+    "Oxidizer": "flame-O",
+}
 
 
 #######################
@@ -124,6 +135,7 @@ Precautionary statements: {self.precaution_statements}
         # Iterate until a pt range or value is found (if at all)
         # If one is found convert range/value to float(s),
         # otherwise return None
+        pt_try = False
         for candidate in pt_candidates:
             if isinstance(candidate, float):
                 return None
@@ -286,7 +298,6 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    # for cid in [4133, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037, 4311764]:
-    for cid in [6367]:
+    for cid in [4133, 6367, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037, 4311764, 33557, 24639]:
         c = Chemical(cid)
         print(c)

@@ -1,4 +1,18 @@
 
+Name: Methyl salicylate
+CAS: 119-36-8
+Molecular formula: C8H8O3
+MW: 152.15 g/mol
+SMILES: COC(=O)C1=CC=CC=C1O
+B.P: 220.0-224.0 °C
+M.P: -8.6 °C
+Pictograms: Irritant
+NFPA704 diamond: ['1', '1', '0']
+Hazard statements: []
+Precautionary statements: P264, P270, P301+P317, P330, and P501
+******************************************
+
+
 Name: Acetyl chloride
 CAS: 75-36-5
 Molecular formula: C2H3ClO
@@ -10,5 +24,173 @@ Pictograms: Flammable,Corrosive
 NFPA704 diamond: ['3', '3', '2', '̵W̵']
 Hazard statements: [225, 314]
 Precautionary statements: P210, P233, P240, P241, P242, P243, P260, P264, P280, P301+P330+P331, P302+P361+P354, P303+P361+P353, P304+P340, P305+P354+P338, P316, P321, P363, P370+P378, P403+P235, P405, and P501
+******************************************
+
+
+Name: Tetrahydrofuran
+CAS: 109-99-9
+Molecular formula: C4H8O
+MW: 72.11 g/mol
+SMILES: C1CCOC1
+B.P: 65.0 °C
+M.P: -108.44 °C
+Pictograms: Flammable,Irritant,Health Hazard
+NFPA704 diamond: ['2', '3', '1']
+Hazard statements: [225, 319, 335, 351]
+Precautionary statements: P203, P210, P233, P240, P241, P242, P243, P261, P264+P265, P271, P280, P303+P361+P353, P304+P340, P305+P351+P338, P318, P319, P337+P317, P370+P378, P403+P233, P403+P235, P405, and P501
+******************************************
+
+
+Name: N,N-Dimethylformamide
+CAS: 68-12-2
+Molecular formula: C3H7NO
+MW: 73.09 g/mol
+SMILES: CN(C)C=O
+B.P: 153.0 °C
+M.P: -60.4 °C
+Pictograms: Irritant,Health Hazard
+NFPA704 diamond: ['2', '2', '0']
+Hazard statements: [312, 319, 332]
+Precautionary statements: P203, P261, P264+P265, P271, P280, P302+P352, P304+P340, P305+P351+P338, P317, P318, P321, P337+P317, P362+P364, P405, and P501
+******************************************
+
+
+Name: tert-Butanol
+CAS: 75-65-0
+Molecular formula: C4H10O
+MW: 74.12 g/mol
+SMILES: CC(C)(C)O
+B.P: 82.3 °C
+M.P: 25.81 °C
+Pictograms: Flammable,Irritant
+NFPA704 diamond: ['2', '3', '0']
+Hazard statements: [225, 319, 332, 335]
+Precautionary statements: P210, P233, P240, P241, P242, P243, P261, P264+P265, P271, P280, P303+P361+P353, P304+P340, P305+P351+P338, P317, P319, P337+P317, P370+P378, P403+P233, P403+P235, P405, and P501
+******************************************
+
+
+Name: Capsaicin
+CAS: 404-86-4
+Molecular formula: C18H27NO3
+MW: 305.4 g/mol
+SMILES: CC(C)C=CCCCCC(=O)NCC1=CC(=C(C=C1)O)OC
+B.P: 210.0-220.0 °C
+M.P: 65.0 °C
+Pictograms: Corrosive,Acute Toxic,Irritant
+NFPA704 diamond: []
+Hazard statements: []
+Precautionary statements: P264, P264+P265, P270, P280, P301+P316, P301+P317, P302+P352, P305+P354+P338, P317, P321, P330, P332+P317, P362+P364, P405, and P501
+******************************************
+
+
+Name: Acetone
+CAS: 67-64-1
+Molecular formula: C3H6O
+MW: 58.08 g/mol
+SMILES: CC(=O)C
+B.P: 56.08 °C
+M.P: -94.9 °C
+Pictograms: Flammable,Irritant
+NFPA704 diamond: ['1', '3', '0']
+Hazard statements: [225, 319, 336]
+Precautionary statements: P210, P233, P240, P241, P242, P243, P261, P264+P265, P271, P280, P303+P361+P353, P304+P340, P305+P351+P338, P319, P337+P317, P370+P378, P403+P233, P403+P235, P405, and P501
+******************************************
+
+
+Name: D-Glucose
+CAS: 2280-44-6
+Molecular formula: C6H12O6
+MW: 180.16 g/mol
+SMILES: C(C1C(C(C(C(O1)O)O)O)O)O
+B.P: None
+M.P: 146.0 °C
+Pictograms: 
+NFPA704 diamond: []
+Hazard statements: None
+Precautionary statements: None
+******************************************
+
+
+Name: Dimethylamine
+CAS: 124-40-3
+Molecular formula: C2H7N
+MW: 45.08 g/mol
+SMILES: CNC
+B.P: 7.3 °C
+M.P: -93.0 °C
+Pictograms: Flammable,Compressed Gas,Corrosive,Irritant,Environmental Hazard
+NFPA704 diamond: ['3', '4', '0']
+Hazard statements: []
+Precautionary statements: P210, P222, P230, P233, P240, P241, P242, P243, P260, P261, P264, P264+P265, P270, P271, P273, P280, P301+P317, P301+P330+P331, P302+P352, P302+P361+P354, P303+P361+P353, P304+P340, P305+P354+P338, P316, P317, P319, P321, P330, P332+P317, P362+P364, P363, P370+P378, P377, P381, P391, P403, P403+P233, P403+P235, P405, P410+P403, and P501
+******************************************
+
+
+Name: Benzoin
+CAS: 119-53-9
+Molecular formula: C14H12O2
+MW: 212.24 g/mol
+SMILES: C1=CC=C(C=C1)C(C(=O)C2=CC=CC=C2)O
+B.P: 194.0 °C
+M.P: 137.0 °C
+Pictograms: Irritant
+NFPA704 diamond: []
+Hazard statements: []
+Precautionary statements: P273, and P501
+******************************************
+
+
+Name: Diphenylmethanol
+CAS: 91-01-0
+Molecular formula: C13H12O
+MW: 184.23 g/mol
+SMILES: C1=CC=C(C=C1)C(C2=CC=CC=C2)O
+B.P: None
+M.P: None
+Pictograms: Irritant
+NFPA704 diamond: []
+Hazard statements: []
+Precautionary statements: P261, P264, P264+P265, P271, P280, P302+P352, P304+P340, P305+P351+P338, P319, P321, P332+P317, P337+P317, P362+P364, P403+P233, P405, and P501
+******************************************
+
+
+Name: Sodium borohydride
+CAS: 16940-66-2
+Molecular formula: BH4.Na
+MW: 37.84 g/mol
+SMILES: [BH4-].[Na+]
+B.P: None
+M.P: None
+Pictograms: Flammable,Corrosive,Acute Toxic,Irritant,Health Hazard
+NFPA704 diamond: []
+Hazard statements: []
+Precautionary statements: P203, P223, P231+P232, P260, P261, P264, P264+P265, P270, P271, P280, P301+P316, P301+P330+P331, P302+P335+P334, P302+P352, P302+P361+P354, P304+P340, P305+P354+P338, P316, P317, P318, P321, P330, P361+P364, P363, P370+P378, P402+P404, P405, and P501
+******************************************
+
+
+Name: Sodium azide
+CAS: 26628-22-8
+Molecular formula: N3Na
+MW: 65.010 g/mol
+SMILES: [N-]=[N+]=[N-].[Na+]
+B.P: None
+M.P: 275.0 °C
+Pictograms: Acute Toxic,Environmental Hazard
+NFPA704 diamond: ['4', '1', '3']
+Hazard statements: [300, 400, 410]
+Precautionary statements: P264, P270, P273, P301+P316, P321, P330, P391, P405, and P501
+******************************************
+
+
+Name: Ammonium perchlorate
+CAS: 7790-98-9
+Molecular formula: NH4ClO4
+MW: 117.49 g/mol
+SMILES: [NH4+].[O-]Cl(=O)(=O)=O
+B.P: None
+M.P: 130.0 °C
+Pictograms: Explosive,Oxidizer
+NFPA704 diamond: []
+Hazard statements: [201, 271]
+Precautionary statements: P210, P220, P230, P240, P250, P280, P283, P306+P360, P370+P378, P370+P380, P371+P380+P375, P372, P373, P401, P420, and P501
 ******************************************
 
