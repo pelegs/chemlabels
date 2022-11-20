@@ -1,0 +1,22 @@
+\documentclass[margin=5pt]{standalone}
+\usepackage{chemfig, mol2chemfig, chemmacros}
+% \pagecolor{black}
+% \setchemfig{chemfig style=white}
+
+% Make chemfig prettier
+\setchemfig{
+	fixed length=false,
+	double bond sep=0.357em,  % 'Bond Spacing'
+	bond style={line width=0.6, cap=round},
+	atomsep=1.785em,    % 'Fixed Length'
+}
+\makeatletter
+\def\Hv@scale{.95}
+\makeatother
+\DeclareMathAlphabet{\foo}{OT1}{phv}{m}{n}
+\renewcommand*\printatom[1]{\ensuremath{\foo{#1}}}
+
+% DOC
+\begin{document}
+\input{mol.tex}
+\end{document}
