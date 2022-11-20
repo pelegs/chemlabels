@@ -5,19 +5,8 @@
 
 % Chemistry
 \usepackage[version=4]{mhchem}
-\usepackage{chemfig, chemmacros}
-\setchemfig{
-	fixed length=false,
-	double bond sep=0.35700em,  % 'Bond Spacing'
-	bond style={line width=0.1em, cap=round},
-	atomsep=1.78500em,    % 'Fixed Length'
-}
-\makeatletter
-\def\Hv@scale{.95}
-\makeatother
-\DeclareMathAlphabet{\foo}{OT1}{phv}{m}{n}
-\renewcommand*\printatom[1]{\ensuremath{\foo{#1}}}
-\usepackage{mol2chemfig}
+\usepackage{chemmacros}
+\usepackage{siunitx}
 
 % GHS pictograms
 \ExplSyntaxOn
@@ -27,12 +16,41 @@
 
 % Font
 \usepackage{fontspec}
-\newfontfamily\arial{Arial}
 \setmainfont{Arial Bold}
 
 % Graphics
 \usepackage{svg}
 \usepackage{tcolorbox}
+\usepackage{mathastext} % GE
+\definecolor{xred}{HTML}{BD4242}
+\definecolor{xblue}{HTML}{4268BD}
+\definecolor{xgreen}{HTML}{52B256}
+\definecolor{xpurple}{HTML}{7F52B2}
+\definecolor{xorange}{HTML}{FD9337}
+\tcbset{
+  fbox/.style={
+    enhanced,
+    colframe=#1,
+    colbacktitle=#1,
+    boxed title style={
+        empty,
+        arc=0pt,
+        outer arc=0pt,
+        boxrule=0pt
+    },
+  },
+  physprop/.style={
+    fbox={xblue},
+    title=Physical properties,
+  },
+  pictograms/.style={
+    fbox={xred},
+    title=GHS pictograms,
+  }
+}
+
+% Others
+\usepackage{blindtext}
 
 % Document
 \begin{document}
@@ -46,7 +64,7 @@
   % Name + CAS
   \posterbox{name=chemicalname, column=1, span=3}{
     \resizebox{16cm}{!}{\Name}\\[5mm]
-    \resizebox{7cm}{!}{CAS: \CAS \hspace{1cm}\ce{\formula}}
+    \resizebox{10cm}{!}{CAS: \CAS \hspace{1cm}\ce{\formula}}
   }
   
   % Logo
@@ -56,21 +74,40 @@
 
   % NFPA704 Diamond
   \def\NFPAfile{parts/NFPA704_\cid.pdf}
-  \posterbox{name=NFPA704, row=3, column=4}{
-    \includegraphics[scale=0.75]{\NFPAfile}
+  \posterbox{name=NFPA704, row=3, column=3, span=2}{
+    \begin{center}
+      \includegraphics[scale=1.2]{\NFPAfile}
+    \end{center}
   }
 
+  % Font adjustment
+  \setmainfont{Arial}
+  \fontsize{18pt}{18pt}\selectfont
+  
   % GHS pictograms
   \posterbox{name=GHSpictograms, row=5, column=1, span=2}{
     \GHSpictograms
   }
-  
+
   % Molecule drawing
   \def\moldraw{parts/molecule_\cid.pdf}
   \posterbox{name=molecule, row=2, column=1, span=2, yshift=-1cm}{
-    % \includegraphics[scale=1]{\moldraw}
-    \centering
-    \cf
+    \begin{center}
+      \includegraphics[scale=1.3]{\moldraw}
+
+      \vspace{1em}
+      \iupac{\IUPACname}
+    \end{center}
+  }
+
+  % Physical properties
+  \posterbox[physprop]{name=data, row=4, column=1, span=2}{
+    \begin{tabular}{ll}
+      Molar mass: & \MW\ \SI{}{g/mol}\\
+      Boiling point: & \BP\ \SI{}{\celsius}\\
+      Melting point: & \MP\ \SI{}{\celsius}\\
+      % Density & 1.5\ \SI{}{g/mL}\\
+    \end{tabular}
   }
 \end{tcbposter}
 \end{document}

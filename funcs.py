@@ -43,6 +43,7 @@ class Chemical:
         self.rest_params = dict(response_type="display")
         self.get_data()
         self.name = self.data["Record"]["RecordTitle"]
+        self.get_IUPAC_name()
         self.get_CAS()
         self.get_molecular_formula()
         self.get_MW()
@@ -57,12 +58,13 @@ class Chemical:
     def __str__(self):
         return f"""
 Name: {self.name}
+IUPAC name: {self.IUPAC_name}
 CAS: {self.CAS}
 Molecular formula: {self.molecular_formula}
 MW: {self.MW} g/mol
 SMILES: {self.SMILES}
-B.P: {format_temperature_range(self.bp)}
-M.P: {format_temperature_range(self.mp)}
+B.P: {format_temperature_range(self.bp)} °C
+M.P: {format_temperature_range(self.mp)} °C
 Pictograms: {','.join(self.GHS_pictograms)}
 NFPA704 diamond: {self.NFPA704_diamond}
 Hazard statements: {self.hazard_statements}
@@ -95,6 +97,13 @@ Precautionary statements: {self.precaution_statements}
             self.molecular_formula = formula["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
         else:
             self.molecular_formula = None
+
+    def get_IUPAC_name(self):
+        name = self.get_property("TOCHeading", "IUPAC Name")
+        if name:
+            self.IUPAC_name = name["Information"][0]["Value"]["StringWithMarkup"][0]["String"]
+        else:
+            self.IUPAC_name = None
 
     def get_MW(self):
         MW_dict = self.get_property("TOCHeading", "Molecular Weight")
@@ -288,9 +297,9 @@ def get_temperatures_from_string(T):
 
 def format_temperature_range(range):
     if isinstance(range, Number):
-        return f"{range} °C"
+        return f"{range}"
     elif isinstance(range, list) or isinstance(range, tuple):
-        return f"{range[0]}-{range[-1]} °C"
+        return f"{range[0]}-{range[-1]}"
     elif range is None:
         return None
     else:
@@ -298,6 +307,7 @@ def format_temperature_range(range):
 
 
 if __name__ == "__main__":
-    for cid in [4133, 6367, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037, 4311764, 33557, 24639]:
+    # for cid in [4133, 6367, 8028, 6228, 6386, 1548943, 180, 5793, 674, 8400, 7037, 4311764, 33557, 24639]:
+    for cid in [4133]:
         c = Chemical(cid)
         print(c)

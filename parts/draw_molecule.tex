@@ -1,0 +1,18 @@
+\documentclass{standalone}
+\usepackage{chemfig}
+\setchemfig{
+	fixed length=false,
+	double bond sep=0.35700em,  % 'Bond Spacing'
+	bond style={line width=0.1em, cap=round},
+	atomsep=1.78500em,    % 'Fixed Length'
+}
+\makeatletter
+\def\Hv@scale{.95}
+\makeatother
+\DeclareMathAlphabet{\foo}{OT1}{phv}{m}{n}
+\renewcommand*\printatom[1]{\ensuremath{\foo{#1}}}
+\usepackage{mol2chemfig}
+
+\begin{document}
+  \molecule
+\end{document}
